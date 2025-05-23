@@ -34,16 +34,16 @@ export default function CarDetail() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#15161a] via-[#242632] to-[#35374d] text-white flex flex-col">
-      {/* КНОПКА НАЗАД */}
+      {/* Кнопка "Назад" */}
       <button
-        onClick={() => router.push('/')}
+        onClick={() => router.back()}
         className="self-start mx-auto mt-6 mb-2 px-4 py-2 rounded-xl bg-gray-700 hover:bg-gray-600 text-white font-medium flex items-center transition"
       >
         <span className="mr-2">←</span>
-        Назад до головного меню
+        Назад
       </button>
 
-      <div className="max-w-4xl w-full mx-auto mt-2 bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 flex flex-col md:flex-row gap-8">
+      <div className="max-w-4xl w-full mx-auto mt-4 bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-6 flex flex-col md:flex-row gap-8">
         <div className="flex-1">
           <CarGallery photos={car.photos} />
         </div>
