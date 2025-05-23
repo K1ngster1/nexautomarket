@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { supabase } from "../../lib/supabaseClient";
+import { useRouter } from "next/router";
 
 const initialFeatures = [
   "Протитуманні фари", "Круїз контроль", "ESP", "Автомагнітола", "Кондиціонер",
@@ -12,103 +14,117 @@ export default function AddCarForm() {
     vin: "", engine: "", fuel: "Бензин", transmission: "",
     drive: "", color: "", price: "", features: [], photos: [],
   });
+  const [photos, setPhotos] = useState<File[]>([]);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  // Додаємо обробник для чекбоксів опцій
-  const handleFeature = (feature) => {
-    setCar((prev) => ({
+  const handleFeature = (feature: string) => {
+    setCar((prev: any) => ({
       ...prev,
       features: prev.features.includes(feature)
-        ? prev.features.filter(f => f !== feature)
+        ? prev.features.filter((f: string) => f !== feature)
         : [...prev.features, feature],
     }));
   };
 
-  // Завантаження фото
-  const handlePhotoChange = (e) => {
-    const files = Array.from(e.target.files).slice(0, 10);
-    setCar((prev) => ({ ...prev, photos: files }));
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? Array.from(e.target.files).slice(0, 10) : [];
+    setPhotos(files);
   };
 
-  // Відправка форми (демо)
-  const handleSubmit = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setCar({ ...car, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (car.photos.length < 5) {
-      alert("Завантажте мінімум 5 фото");
+    setLoading(true);
+
+    // upload photos to supabase storage
+    const photoUrls: string[] = [];
+    for (const file of photos) {
+      const fileName = `${Date.now()}_${file.name}`;
+      const { data, error } = await supabase.storage
+        .from("car-photos")
+        .upload(fileName, file);
+      if (error) {
+        alert("Фото не завантажено: " + error.message);
+        setLoading(false);
+        return;
+      }
+      // формуємо URL
+      const url = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/car-photos/${fileName}`;
+      photoUrls.push(url);
+    }
+
+    // запис у базу
+    const { error: dbError } = await supabase.from("cars").insert([{
+      ...car,
+      year: Number(car.year),
+      photos: photoUrls,
+      features: car.features,
+      created_at: new Date().toISOString()
+    }]);
+    setLoading(false);
+
+    if (dbError) {
+      alert("Помилка додавання авто: " + dbError.message);
       return;
     }
-    // TODO: Відправка даних на сервер/API
-    console.log(car);
-    alert("Авто додано (у консолі)");
+
+    alert("Авто додано!");
+    router.push("/"); // на головну, або на список авто
   };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-3xl mx-auto p-6 bg-white/10 rounded-xl shadow">
       <h2 className="text-xl font-bold mb-4">Основна інформація</h2>
-      {/* Поля форми */}
       <div className="grid grid-cols-2 gap-4 mb-4">
-        <input placeholder="Виробник" value={car.brand} onChange={e => setCar({ ...car, brand: e.target.value })} className="p-2 rounded bg-white/20" />
-        <input placeholder="Модель" value={car.model} onChange={e => setCar({ ...car, model: e.target.value })} className="p-2 rounded bg-white/20" />
-        <input placeholder="Рік" value={car.year} onChange={e => setCar({ ...car, year: e.target.value })} className="p-2 rounded bg-white/20" />
-        <input placeholder="Пробіг" value={car.mileage} onChange={e => setCar({ ...car, mileage: e.target.value })} className="p-2 rounded bg-white/20" />
-        <input placeholder="VIN-код" value={car.vin} onChange={e => setCar({ ...car, vin: e.target.value })} className="p-2 rounded bg-white/20" />
-        <input placeholder="Обʼєм двигуна (л)" value={car.engine} onChange={e => setCar({ ...car, engine: e.target.value })} className="p-2 rounded bg-white/20" />
-        <input placeholder="Колір" value={car.color} onChange={e => setCar({ ...car, color: e.target.value })} className="p-2 rounded bg-white/20" />
-        <input placeholder="Ціна (USD)" value={car.price} onChange={e => setCar({ ...car, price: e.target.value })} className="p-2 rounded bg-white/20" />
+        <input name="brand" placeholder="Виробник" value={car.brand} onChange={handleChange} className="p-2 rounded bg-white/20" />
+        <input name="model" placeholder="Модель" value={car.model} onChange={handleChange} className="p-2 rounded bg-white/20" />
+        <input name="year" placeholder="Рік" value={car.year} onChange={handleChange} className="p-2 rounded bg-white/20" />
+        <input name="mileage" placeholder="Пробіг" value={car.mileage} onChange={handleChange} className="p-2 rounded bg-white/20" />
+        <input name="vin" placeholder="VIN-код" value={car.vin} onChange={handleChange} className="p-2 rounded bg-white/20" />
+        <input name="engine" placeholder="Обʼєм двигуна (л)" value={car.engine} onChange={handleChange} className="p-2 rounded bg-white/20" />
+        <input name="color" placeholder="Колір" value={car.color} onChange={handleChange} className="p-2 rounded bg-white/20" />
+        <input name="price" placeholder="Ціна (USD)" value={car.price} onChange={handleChange} className="p-2 rounded bg-white/20" />
       </div>
-
-      {/* Селект/радіо для пального, коробки, приводу */}
       <div className="mb-4">
-        <select value={car.fuel} onChange={e => setCar({ ...car, fuel: e.target.value })} className="p-2 rounded bg-white/20 mr-2">
+        <select name="fuel" value={car.fuel} onChange={handleChange} className="p-2 rounded bg-white/20 mr-2">
           <option>Бензин</option>
           <option>Дизель</option>
           <option>Газ</option>
           <option>Електро</option>
           <option>Гібрид</option>
         </select>
-        <select value={car.transmission} onChange={e => setCar({ ...car, transmission: e.target.value })} className="p-2 rounded bg-white/20 mr-2">
+        <select name="transmission" value={car.transmission} onChange={handleChange} className="p-2 rounded bg-white/20 mr-2">
           <option>Автомат</option>
           <option>Механіка</option>
         </select>
-        <select value={car.drive} onChange={e => setCar({ ...car, drive: e.target.value })} className="p-2 rounded bg-white/20">
+        <select name="drive" value={car.drive} onChange={handleChange} className="p-2 rounded bg-white/20">
           <option>Передній</option>
           <option>Задній</option>
           <option>Повний</option>
         </select>
       </div>
-
-      {/* Функції авто */}
       <h3 className="font-bold mb-2">Комплектація</h3>
       <div className="grid grid-cols-3 gap-2 mb-4">
         {initialFeatures.map(f => (
           <label key={f} className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={car.features.includes(f)}
-              onChange={() => handleFeature(f)}
-            />
+            <input type="checkbox" checked={car.features.includes(f)} onChange={() => handleFeature(f)} />
             {f}
           </label>
         ))}
       </div>
-
-      {/* Завантаження фото */}
       <div className="mb-4">
         <label className="block font-bold mb-2">Фото (від 5 до 10):</label>
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handlePhotoChange}
-        />
+        <input type="file" accept="image/*" multiple onChange={handlePhotoChange} />
         <div className="flex gap-2 mt-2 flex-wrap">
-          {car.photos.length > 0 && Array.from(car.photos).map((file, idx) =>
-            <img key={idx} src={URL.createObjectURL(file)} alt="" className="w-16 h-16 object-cover rounded" />
-          )}
+          {photos.map((file, idx) => <img key={idx} src={URL.createObjectURL(file)} alt="" className="w-16 h-16 object-cover rounded" />)}
         </div>
       </div>
-
-      <button className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded" type="submit">
-        Додати автомобіль
+      <button className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded" type="submit" disabled={loading}>
+        {loading ? "Додаємо..." : "Додати автомобіль"}
       </button>
     </form>
   );
