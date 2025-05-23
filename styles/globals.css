@@ -6,10 +6,7 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-html {
-  @apply dark;
-}
-
+/* Далі анімації і т.д. */
 @keyframes gradient-x {
   0%, 100% {
     background-size: 200% 200%;
