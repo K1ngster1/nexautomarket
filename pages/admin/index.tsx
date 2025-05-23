@@ -1,111 +1,133 @@
-import { useState } from 'react';
+import React, { useState } from "react";
 
-const initialCars = [
-  {
-    id: 1,
-    title: "Renault Sandero Stepway",
-    price: "$11 500",
-    year: 2020,
-    mileage: "89 000 км",
-    engine: "1.5л Дизель",
-    status: "active"
-  },
-  // ... інші авто
-];
+// Тип машини
+type Car = {
+  id: number;
+  title: string;
+  price: string;
+  year: number;
+  mileage: string;
+  engine: string;
+  status: string;
+};
 
-export default function AdminDashboard() {
-  const [cars, setCars] = useState(initialCars);
-  const [newCar, setNewCar] = useState({ title: '', price: '', year: '', mileage: '', engine: '' });
+export default function AdminPage() {
+  // Початковий масив машин (можна змінити на запит до бекенду)
+  const [cars, setCars] = useState<Car[]>([
+    {
+      id: 1,
+      title: "Renault Sandero Stepway",
+      price: "$11 500",
+      year: 2020,
+      mileage: "89 000 км",
+      engine: "1.5л Дизель",
+      status: "active",
+    },
+  ]);
 
+  // Стан форми для додавання машини
+  const [newCar, setNewCar] = useState<Omit<Car, "id" | "status">>({
+    title: "",
+    price: "",
+    year: new Date().getFullYear(),
+    mileage: "",
+    engine: "",
+  });
+
+  // Додає машину
   const addCar = () => {
-    setCars([...cars, { ...newCar, id: Date.now(), status: "active" }]);
-    setNewCar({ title: '', price: '', year: '', mileage: '', engine: '' });
+    setCars([
+      ...cars,
+      { ...newCar, id: Date.now(), status: "active" },
+    ]);
+    setNewCar({
+      title: "",
+      price: "",
+      year: new Date().getFullYear(),
+      mileage: "",
+      engine: "",
+    });
   };
 
-  const deleteCar = (id: number) => setCars(cars.filter(car => car.id !== id));
-
-  const markAsSold = (id: number) => setCars(
-    cars.map(car => car.id === id ? { ...car, status: "sold" } : car)
-  );
+  // Видаляє машину
+  const deleteCar = (id: number) => {
+    setCars(cars.filter((car) => car.id !== id));
+  };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white py-8 px-2">
-      <h1 className="text-3xl font-bold mb-6">Адмін-панель: Мої авто</h1>
-
-      {/* Додавання нового авто */}
-      <div className="bg-gray-900 rounded-lg p-4 mb-6">
-        <div className="flex gap-4 mb-2">
+    <div className="min-h-screen bg-gradient-to-br from-[#22223b] via-[#383863] to-[#232536] text-white p-8">
+      <h1 className="text-3xl font-bold mb-6">Адмін-панель</h1>
+      <div className="bg-white/10 p-4 rounded-xl mb-10 shadow-lg max-w-xl">
+        <h2 className="text-xl font-bold mb-3">Додати авто</h2>
+        <div className="grid grid-cols-2 gap-3 mb-3">
           <input
-            className="bg-gray-800 rounded px-2 py-1 flex-1"
+            type="text"
+            placeholder="Марка/Модель"
+            className="p-2 rounded bg-white/20 text-white"
             value={newCar.title}
-            onChange={e => setNewCar({ ...newCar, title: e.target.value })}
-            placeholder="Назва авто"
+            onChange={(e) => setNewCar({ ...newCar, title: e.target.value })}
           />
           <input
-            className="bg-gray-800 rounded px-2 py-1 flex-1"
-            value={newCar.price}
-            onChange={e => setNewCar({ ...newCar, price: e.target.value })}
+            type="text"
             placeholder="Ціна"
+            className="p-2 rounded bg-white/20 text-white"
+            value={newCar.price}
+            onChange={(e) => setNewCar({ ...newCar, price: e.target.value })}
           />
           <input
-            className="bg-gray-800 rounded px-2 py-1 flex-1"
-            value={newCar.year}
-            onChange={e => setNewCar({ ...newCar, year: e.target.value })}
+            type="number"
             placeholder="Рік"
+            className="p-2 rounded bg-white/20 text-white"
+            value={newCar.year}
+            onChange={(e) => setNewCar({ ...newCar, year: Number(e.target.value) })}
           />
           <input
-            className="bg-gray-800 rounded px-2 py-1 flex-1"
-            value={newCar.mileage}
-            onChange={e => setNewCar({ ...newCar, mileage: e.target.value })}
+            type="text"
             placeholder="Пробіг"
+            className="p-2 rounded bg-white/20 text-white"
+            value={newCar.mileage}
+            onChange={(e) => setNewCar({ ...newCar, mileage: e.target.value })}
           />
           <input
-            className="bg-gray-800 rounded px-2 py-1 flex-1"
-            value={newCar.engine}
-            onChange={e => setNewCar({ ...newCar, engine: e.target.value })}
+            type="text"
             placeholder="Двигун"
+            className="p-2 rounded bg-white/20 text-white"
+            value={newCar.engine}
+            onChange={(e) => setNewCar({ ...newCar, engine: e.target.value })}
           />
-          <button onClick={addCar} className="bg-green-600 hover:bg-green-700 px-4 py-1 rounded text-white">Додати</button>
         </div>
+        <button
+          className="bg-violet-500 hover:bg-violet-600 text-white px-6 py-2 rounded shadow"
+          onClick={addCar}
+        >
+          Додати авто
+        </button>
       </div>
 
-      {/* Таблиця авто */}
-      <table className="w-full text-left border-separate border-spacing-y-2">
-        <thead>
-          <tr>
-            <th>Назва</th>
-            <th>Ціна</th>
-            <th>Рік</th>
-            <th>Пробіг</th>
-            <th>Двигун</th>
-            <th>Статус</th>
-            <th>Дії</th>
-          </tr>
-        </thead>
-        <tbody>
-          {cars.map(car => (
-            <tr key={car.id} className="bg-gray-900 rounded">
-              <td>{car.title}</td>
-              <td>{car.price}</td>
-              <td>{car.year}</td>
-              <td>{car.mileage}</td>
-              <td>{car.engine}</td>
-              <td>
-                <span className={car.status === "sold" ? "text-red-400" : "text-green-400"}>
-                  {car.status === "sold" ? "Продано" : "Активне"}
-                </span>
-              </td>
-              <td>
-                <button onClick={() => deleteCar(car.id)} className="text-red-400 hover:underline mr-2">Видалити</button>
-                {car.status === "active" && (
-                  <button onClick={() => markAsSold(car.id)} className="text-yellow-400 hover:underline">Позначити як продане</button>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h2 className="text-xl font-bold mb-3">Список авто</h2>
+      <div className="grid gap-4 max-w-xl">
+        {cars.map((car) => (
+          <div
+            key={car.id}
+            className="flex justify-between items-center bg-white/10 rounded-xl p-4 shadow"
+          >
+            <div>
+              <div className="font-bold">{car.title} ({car.year})</div>
+              <div>Ціна: {car.price}</div>
+              <div>Пробіг: {car.mileage}</div>
+              <div>Двигун: {car.engine}</div>
+              <div className="text-xs text-gray-300">Статус: {car.status}</div>
+            </div>
+            <button
+              className="ml-4 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+              onClick={() => deleteCar(car.id)}
+            >
+              Видалити
+            </button>
+          </div>
+        ))}
+        {cars.length === 0 && <div className="text-gray-400">Авто немає</div>}
+      </div>
     </div>
   );
 }
-
