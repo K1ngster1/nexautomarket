@@ -1,11 +1,11 @@
 import React from "react";
 import { useRouter } from "next/router";
-import { Home, Truck, ShoppingCart } from "lucide-react";
+import { Car, Ship, ShoppingCart } from "lucide-react";
 
 const navItems = [
   { label: "Каталог", icon: <Car size={24} />, path: "/catalog" },
   { label: "В дорозі", icon: <Ship size={24} />, path: "/in-transit" },
-  { label: "Замовити", icon: <ShoppingCart size={24} />, path: "/order" },
+  { label: "Замовити", icon: <ShoppingCart size={24} />, path: "/order" }
 ];
 
 const BottomNav: React.FC = () => {
