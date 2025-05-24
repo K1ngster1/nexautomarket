@@ -7,7 +7,7 @@ export default function Admin() {
 
   useEffect(() => {
     // Додаємо Telegram Login Widget
-    if (!window.TelegramLoginWidgetInjected) {
+    if (!(window as any).TelegramLoginWidgetInjected) {
       const script = document.createElement("script");
       script.src = "https://telegram.org/js/telegram-widget.js?7";
       script.setAttribute("data-telegram-login", "NexAutoMarketBot"); // <-- ТУТ ІМ'Я ТВОГО БОТА!
