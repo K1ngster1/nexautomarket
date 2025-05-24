@@ -15,8 +15,6 @@ export default function AdminPage() {
   useEffect(() => {
     // Шукаємо у window
     // eslint-disable-next-line
-    if (window.TelegramLoginWidget) {
-      // можна обробляти тут, якщо треба
     }
     // eslint-disable-next-line
     window.onTelegramAuth = function (userData) {
