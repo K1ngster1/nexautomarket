@@ -1,7 +1,3 @@
 export default function InTransit() {
-  return (
-    <div>
-      {/* Тут буде "Авто в дорозі" */}
-    </div>
-  );
+  return <div>Авто в дорозі</div>;
 }
