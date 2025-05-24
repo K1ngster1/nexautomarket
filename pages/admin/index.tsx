@@ -1,55 +1,68 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-const ADMIN_IDS = [599020247]; // Твій Telegram user_id
+const ADMIN_LOGIN = "admin";
+const ADMIN_PASSWORD = "nexauto2025"; // Задай свій пароль
 
 export default function Admin() {
-  const [user, setUser] = useState<any>(null);
+  const [login, setLogin] = useState("");
+  const [password, setPassword] = useState("");
+  const [access, setAccess] = useState(false);
 
-  useEffect(() => {
-    if (!(window as any).TelegramLoginWidgetInjected) {
-      const script = document.createElement("script");
-      script.src = "https://telegram.org/js/telegram-widget.js?7";
-      script.setAttribute("data-telegram-login", "NexAutoMarketBot");
-      script.setAttribute("data-size", "large");
-      script.setAttribute("data-radius", "8");
-      script.setAttribute("data-request-access", "write");
-      script.setAttribute("data-userpic", "false");
-      script.setAttribute("data-lang", "uk");
-      script.setAttribute("data-on-auth", "onTelegramAuth");
-      script.async = true;
-      document.getElementById("telegram-login")?.appendChild(script);
-      (window as any).TelegramLoginWidgetInjected = true;
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (login === ADMIN_LOGIN && password === ADMIN_PASSWORD) {
+      setAccess(true);
+    } else {
+      alert("Невірний логін або пароль!");
     }
+  };
 
-    (window as any).onTelegramAuth = function (userData: any) {
-      localStorage.setItem("tgUser", JSON.stringify(userData));
-      setUser(userData);
-    };
-
-    const localUser = localStorage.getItem("tgUser");
-    if (localUser) setUser(JSON.parse(localUser));
-  }, []);
-
-  if (!user)
+  if (!access) {
     return (
-      <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-        <div>Авторизація в адмінці через Telegram</div>
-        <div id="telegram-login" style={{ marginTop: 20 }} />
-      </div>
-    );
-
-  if (!ADMIN_IDS.includes(user.id)) {
-    return (
-      <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        У вас немає доступу
-      </div>
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          minHeight: "80vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <h2>Вхід в адмінку</h2>
+        <input
+          type="text"
+          placeholder="Логін"
+          value={login}
+          onChange={e => setLogin(e.target.value)}
+          style={{ margin: "10px 0", fontSize: 18, padding: 8 }}
+        />
+        <input
+          type="password"
+          placeholder="Пароль"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          style={{ margin: "10px 0", fontSize: 18, padding: 8 }}
+        />
+        <button type="submit" style={{ fontSize: 16, padding: "6px 20px" }}>
+          Увійти
+        </button>
+      </form>
     );
   }
 
   return (
-    <div>
-      <h1>Ласкаво просимо в адмінку, {user.first_name}</h1>
-      {/* Контент адмінки */}
+    <div
+      style={{
+        minHeight: "80vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+      }}
+    >
+      <h1>Ласкаво просимо в адмінку!</h1>
+      {/* Тут розміщуй функціонал адмінки */}
     </div>
   );
 }
