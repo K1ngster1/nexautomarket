@@ -21,8 +21,8 @@ export default function Home() {
         <img
           src="/logo.png"
           alt="NexAutoMarket"
-          width={120}
-          height={120}
+          width={160}
+          height={160}
           style={{
             borderRadius: 22,
             boxShadow: "0 8px 36px rgba(0,0,0,0.13)",
