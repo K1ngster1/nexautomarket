@@ -25,7 +25,7 @@ export default function AdminPage() {
         <Script
           async
           src="https://telegram.org/js/telegram-widget.js?7"
-          data-telegram-login="nexauto_assistant_bot" // заміни на свого!
+          data-telegram-login="NexAutoMarketBot" // заміни на свого!
           data-size="large"
           data-userpic="false"
           data-request-access="write"
