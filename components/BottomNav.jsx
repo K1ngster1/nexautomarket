@@ -1,5 +1,6 @@
-// src/components/BottomNav.jsx
+// ✅ ПРАВИЛЬНО!
 import React from "react";
+import { useRouter } from "next/router";
 import { Home, Truck, ShoppingCart } from "lucide-react";
 
 const navItems = [
@@ -8,7 +9,10 @@ const navItems = [
   { label: "Замовити", icon: <ShoppingCart size={24} />, path: "/order" },
 ];
 
-export default function BottomNav({ current, onNavigate }) {
+const BottomNav: React.FC = () => {
+  const router = useRouter();
+  const current = router.pathname;
+
   return (
     <nav style={{
       position: "fixed",
@@ -29,7 +33,7 @@ export default function BottomNav({ current, onNavigate }) {
       {navItems.map((item) => (
         <div
           key={item.label}
-          onClick={() => onNavigate(item.path)}
+          onClick={() => router.push(item.path)}
           style={{
             color: current === item.path ? "#b286fd" : "#fff",
             display: "flex",
@@ -45,4 +49,6 @@ export default function BottomNav({ current, onNavigate }) {
       ))}
     </nav>
   );
-}
+};
+
+export default BottomNav;
