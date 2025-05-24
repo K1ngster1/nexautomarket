@@ -1,4 +1,3 @@
-// ✅ ПРАВИЛЬНО!
 import React from "react";
 import { useRouter } from "next/router";
 import { Home, Truck, ShoppingCart } from "lucide-react";
