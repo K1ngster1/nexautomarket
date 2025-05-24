@@ -1,3 +1,6 @@
+import { supabase } from '../lib/supabaseClient'
+import { useEffect, useState } from 'react'
+
 type Car = {
   id: number;
   name: string;
@@ -8,29 +11,18 @@ type Car = {
   description: string;
 };
 
-const cars: Car[] = [
-  {
-    id: 1,
-    name: "BMW X5 xDrive30d",
-    year: 2018,
-    price: 32000,
-    mileage: 96000,
-    image: "https://cdn.pixabay.com/photo/2017/01/06/19/15/car-1957037_1280.jpg",
-    description: "Дизель, автомат, повний привід. Дуже доглянуте авто з Європи.",
-  },
-  {
-    id: 2,
-    name: "Toyota Camry 2.5 Hybrid",
-    year: 2021,
-    price: 28500,
-    mileage: 32000,
-    image: "https://cdn.pixabay.com/photo/2015/01/19/13/51/car-604019_1280.jpg",
-    description: "Гібрид, автомат, LED-оптика, камера заднього виду.",
-  },
-  // Додай ще авто, якщо потрібно
-];
-
 export default function Catalog() {
+  const [cars, setCars] = useState<Car[]>([])
+
+  useEffect(() => {
+    supabase
+      .from('cars')
+      .select('*')
+      .then(({ data }) => {
+        if (data) setCars(data)
+      })
+  }, [])
+
   return (
     <div style={{
       maxWidth: 900,
@@ -68,5 +60,5 @@ export default function Catalog() {
         </div>
       ))}
     </div>
-  );
+  )
 }
