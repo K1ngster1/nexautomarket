@@ -16,10 +16,21 @@ export default function Home() {
 
   return (
     <div>
+      {/* Логотип згори */}
+      <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 32, marginBottom: 0 }}>
+        <img
+          src="/logo.png"
+          alt="NexAutoMarket"
+          width={70}
+          height={70}
+          style={{ borderRadius: 16, boxShadow: "0 4px 30px rgba(0,0,0,0.13)" }}
+        />
+      </div>
+
       {/* Стартова секція */}
       <div style={{
         margin: "0 auto",
-        marginTop: 30,
+        marginTop: 10,
         marginBottom: 32,
         maxWidth: 350,
         background: "rgba(38,39,55,0.97)",
@@ -28,17 +39,22 @@ export default function Home() {
         boxShadow: "0 4px 30px 0 rgba(0,0,0,0.27)",
         textAlign: "center"
       }}>
-        {/* Заміни шлях до логотипу на свій або прибери зовсім */}
-        {/* <img src="/nexauto_logo.png" width={70} height={70} style={{borderRadius: 16, margin: "0 auto 12px"}} /> */}
-        <h2 style={{fontWeight:700, fontSize:28, background: "linear-gradient(90deg,#b286fd,#50e3c2)", WebkitBackgroundClip:"text", color:"transparent", marginBottom: 8}}>
-          Автомайданчик<br/>у смартфоні
+        <h2 style={{
+          fontWeight: 700,
+          fontSize: 28,
+          background: "linear-gradient(90deg,#b286fd,#50e3c2)",
+          WebkitBackgroundClip: "text",
+          color: "transparent",
+          marginBottom: 8
+        }}>
+          Автомайданчик<br />у смартфоні
         </h2>
-        <div style={{color:"#cfcfcf", fontSize:17, marginBottom:18}}>
+        <div style={{ color: "#cfcfcf", fontSize: 17, marginBottom: 18 }}>
           Перший сучасний онлайн-майданчик для авто у м.Чернігів
         </div>
         <a href="#catalog" style={{
-          display:"inline-block",
-          fontWeight:600,
+          display: "inline-block",
+          fontWeight: 600,
           background: "linear-gradient(90deg,#b286fd,#50e3c2)",
           color: "#fff",
           padding: "10px 28px",
@@ -46,9 +62,9 @@ export default function Home() {
           textDecoration: "none",
           marginBottom: 12
         }}>Переглянути авто</a>
-        <div style={{fontSize:13, color:"#d5d5d5", marginTop:16}}>
-          м.Чернігів, вул. Любечська 70<br/>
-          <a href="tel:+380930000000" style={{color:"#b286fd", textDecoration:"underline"}}>Зателефонувати</a>
+        <div style={{ fontSize: 13, color: "#d5d5d5", marginTop: 16 }}>
+          м.Чернігів, вул. Любечська 70<br />
+          <a href="tel:+380930000000" style={{ color: "#b286fd", textDecoration: "underline" }}>Зателефонувати</a>
         </div>
       </div>
 
@@ -62,7 +78,7 @@ export default function Home() {
         gap: "18px"
       }}>
         {cars.length === 0 ? (
-          <div style={{color: "#888", gridColumn: "1/-1", textAlign: "center"}}>Авто наразі немає</div>
+          <div style={{ color: "#888", gridColumn: "1/-1", textAlign: "center" }}>Авто наразі немає</div>
         ) : (
           cars.map(car => (
             <div key={car.id} style={{
