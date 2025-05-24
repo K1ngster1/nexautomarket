@@ -15,22 +15,24 @@ export default function Home() {
   }, [])
 
   return (
-<div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 40, marginBottom: 0 }}>
-  <img
-    src="/logo.png"
-    alt="NexAutoMarket"
-    width={120}
-    height={120}
-    style={{
-      borderRadius: 22,
-      boxShadow: "0 8px 36px rgba(0,0,0,0.13)",
-      objectFit: "cover",
-      background: "#232334"
-    }}
-  />
-</div>
+    <div>
+      {/* Великий логотип зверху */}
+      <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 40, marginBottom: 0 }}>
+        <img
+          src="/logo.png"
+          alt="NexAutoMarket"
+          width={120}
+          height={120}
+          style={{
+            borderRadius: 22,
+            boxShadow: "0 8px 36px rgba(0,0,0,0.13)",
+            objectFit: "cover",
+            background: "#232334"
+          }}
+        />
+      </div>
 
-     {/* Стартова секція */}
+      {/* Стартова секція */}
       <div style={{
         margin: "0 auto",
         marginTop: 10,
