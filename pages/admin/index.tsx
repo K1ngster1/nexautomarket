@@ -1,56 +1,65 @@
-import Script from "next/script";
 import { useEffect, useState } from "react";
 
-const ALLOWED_IDS = [599020247];
+const ADMIN_IDS = [599020247]; // Додай сюди свої Telegram user_id
 
-export default function AdminAuth() {
+export default function Admin() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
+    // Додаємо Telegram Login Widget
+    if (!window.TelegramLoginWidgetInjected) {
+      const script = document.createElement("script");
+      script.src = "https://telegram.org/js/telegram-widget.js?7";
+      script.setAttribute("data-telegram-login", "NexAutoMarketBot"); // <-- ТУТ ІМ'Я ТВОГО БОТА!
+      script.setAttribute("data-size", "large");
+      script.setAttribute("data-radius", "8");
+      script.setAttribute("data-request-access", "write");
+      script.setAttribute("data-userpic", "false");
+      script.setAttribute("data-lang", "uk");
+      script.setAttribute("data-on-auth", "onTelegramAuth");
+      script.async = true;
+      document.getElementById("telegram-login")?.appendChild(script);
+
+      // Позначаємо, що вже вставили
+      (window as any).TelegramLoginWidgetInjected = true;
+    }
+
+    // Глобальна функція для отримання даних після авторизації
     (window as any).onTelegramAuth = function (userData: any) {
-      if (ALLOWED_IDS.includes(userData.id)) {
-        localStorage.setItem("tgUser", JSON.stringify(userData));
-        setUser(userData);
-      } else {
-        alert("У вас немає доступу!");
-      }
+      localStorage.setItem("tgUser", JSON.stringify(userData));
+      setUser(userData);
     };
-    const local = localStorage.getItem("tgUser");
-    if (local) setUser(JSON.parse(local));
+
+    // Якщо вже є userData в localStorage
+    const localUser = localStorage.getItem("tgUser");
+    if (localUser) {
+      setUser(JSON.parse(localUser));
+    }
   }, []);
 
-  if (!user) {
+  // --- Перевірка доступу ---
+  if (!user)
     return (
-      <div style={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <div>
-          <div style={{ marginBottom: 20, textAlign: "center" }}>
-            Авторизація в адмінці через Telegram
-          </div>
-          {/* Додаємо Telegram Login Widget через dangerouslySetInnerHTML */}
-          <Script src="https://telegram.org/js/telegram-widget.js?7" strategy="afterInteractive" />
-          <div
-            dangerouslySetInnerHTML={{
-              __html: `
-                <script async src="https://telegram.org/js/telegram-widget.js?7"
-                  data-telegram-login="nexautobot"
-                  data-size="large"
-                  data-radius="8"
-                  data-request-access="write"
-                  data-userpic="false"
-                  data-lang="uk"
-                  data-on-auth="onTelegramAuth"></script>
-              `,
-            }}
-          />
-        </div>
+      <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+        <div>Авторизація в адмінці через Telegram</div>
+        <div id="telegram-login" style={{ marginTop: 20 }} />
+      </div>
+    );
+
+  if (!ADMIN_IDS.includes(user.id)) {
+    return (
+      <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        У вас немає доступу
       </div>
     );
   }
 
+  // Далі твоя адмінка...
   return (
     <div>
-      <h2>Ви увійшли як {user.first_name} (id: {user.id})</h2>
-      {/* Твоя адмінка */}
+      {/* Контент адмінки */}
+      <h1>Ласкаво просимо в адмінку, {user.first_name}</h1>
+      {/* ... */}
     </div>
   );
 }
