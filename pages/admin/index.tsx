@@ -5,25 +5,19 @@ export default function AdminPage() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    // Читати з localStorage/куки якщо вже авторизовано
     const data = localStorage.getItem("tgUser");
     if (data) setUser(JSON.parse(data));
-    // eslint-disable-next-line
   }, []);
 
-  // Коли Telegram повертає дані
   useEffect(() => {
-    // Шукаємо у window
+    // TelegramLoginWidget НЕ потрібен!
     // eslint-disable-next-line
-    }
-    // eslint-disable-next-line
-    window.onTelegramAuth = function (userData) {
+    window.onTelegramAuth = function (userData: any) {
       localStorage.setItem("tgUser", JSON.stringify(userData));
       setUser(userData);
     };
   }, []);
 
-  // Якщо не авторизовано
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -33,14 +27,12 @@ export default function AdminPage() {
           data-size="large"
           data-userpic="false"
           data-request-access="write"
-          data-userpic="false"
           data-onauth="onTelegramAuth(user)"
         />
       </div>
     );
   }
 
-  // Якщо користувач НЕ дозволений
   if (!allowedAdmins.includes(Number(user.id))) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
@@ -50,12 +42,11 @@ export default function AdminPage() {
     );
   }
 
-  // ТУТ — твоя справжня адмінка (контент)
   return (
     <div>
       <h2 className="text-xl mb-4">Вітаємо, {user.first_name}! Це адмінка 🚀</h2>
       <button onClick={() => { localStorage.removeItem("tgUser"); setUser(null); }} className="underline mb-8">Вийти</button>
-      {/* Адмін-функції тут */}
+      {/* Тут твоя адмінка */}
     </div>
   );
 }
