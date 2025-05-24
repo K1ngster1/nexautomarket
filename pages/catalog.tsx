@@ -1,25 +1,31 @@
 import { supabase } from '../lib/supabaseClient'
 import { useEffect, useState } from 'react'
 
-type Car = {
-  id: number;
-  name: string;
-  year: number;
+export type Car = {
+  id: string;
+  title: string;
   price: number;
+  year: number;
   mileage: number;
-  image: string;
+  engine: string;
+  transmission: string;
+  drive: string;
+  vin: string;
+  status: string;
   description: string;
+  created_at: string;
+  images: string;
 };
 
 export default function Catalog() {
-  const [cars, setCars] = useState<Car[]>([])
+  const [cars, setCars] = useState<Car[]>([]);
 
   useEffect(() => {
     supabase
       .from('cars')
       .select('*')
       .then(({ data }) => {
-        if (data) setCars(data)
+        if (data) setCars(data as Car[])
       })
   }, [])
 
@@ -42,18 +48,19 @@ export default function Catalog() {
           display: "flex",
           flexDirection: "column"
         }}>
+          {/* Відображаємо перше зображення або заглушку */}
           <img
-            src={car.image}
-            alt={car.name}
+            src={car.images?.split(',')[0] || "https://via.placeholder.com/320x180?text=No+Image"}
+            alt={car.title}
             style={{ width: "100%", height: 180, objectFit: "cover" }}
           />
           <div style={{ padding: 16 }}>
-            <h3 style={{ margin: "0 0 10px", fontSize: 22 }}>{car.name}</h3>
+            <h3 style={{ margin: "0 0 10px", fontSize: 22 }}>{car.title}</h3>
             <div style={{ fontSize: 16, marginBottom: 4 }}>
-              <b>Рік:</b> {car.year} &nbsp; <b>Пробіг:</b> {car.mileage.toLocaleString()} км
+              <b>Рік:</b> {car.year} &nbsp; <b>Пробіг:</b> {car.mileage?.toLocaleString()} км
             </div>
             <div style={{ fontSize: 16, marginBottom: 10 }}>
-              <b>Ціна:</b> ${car.price.toLocaleString()}
+              <b>Ціна:</b> ${car.price?.toLocaleString()}
             </div>
             <div style={{ color: "#cfcfcf", fontSize: 15 }}>{car.description}</div>
           </div>
