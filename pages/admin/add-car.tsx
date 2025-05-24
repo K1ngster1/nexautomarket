@@ -1,6 +1,23 @@
 import React, { useState } from "react";
 
-const initialState = {
+type CarState = {
+  brand: string;
+  model: string;
+  year: string;
+  mileage: string;
+  vin: string;
+  engineVolume: string;
+  fuelType: string;
+  transmission: string;
+  drive: string;
+  color: string;
+  price: string;
+  description: string;
+  photos: File[];
+  features: string[];
+};
+
+const initialState: CarState = {
   brand: "",
   model: "",
   year: "",
@@ -41,11 +58,11 @@ const featuresList = [
   "Підсилювач керма",
   "Камера 360",
   "Склопідйомники",
-  "Електрозеркала"
+  "Електрозеркала",
 ];
 
 export default function AddCarPage() {
-  const [car, setCar] = useState(initialState);
+  const [car, setCar] = useState<CarState>(initialState);
   const [preview, setPreview] = useState<string[]>([]);
 
   // Для фото: збереження preview
@@ -202,7 +219,6 @@ export default function AddCarPage() {
           />
         </label>
 
-        {/* --- Додаємо поле ОПИС --- */}
         <label>
           Опис авто
           <textarea
