@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Script from "next/script";
 import { allowedAdmins } from "../../lib/allowedAdmins";
 
 export default function AdminPage() {
@@ -10,8 +11,7 @@ export default function AdminPage() {
   }, []);
 
   useEffect(() => {
-    // TelegramLoginWidget НЕ потрібен!
-    // eslint-disable-next-line
+    // @ts-ignore
     window.onTelegramAuth = function (userData: any) {
       localStorage.setItem("tgUser", JSON.stringify(userData));
       setUser(userData);
@@ -22,8 +22,10 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center">
         <h2 className="mb-6 text-xl">Авторизація в адмінці через Telegram</h2>
-        <script async src="https://telegram.org/js/telegram-widget.js?7"
-          data-telegram-login="YOUR_BOT_USERNAME" // <-- заміни на свого бота!
+        <Script
+          async
+          src="https://telegram.org/js/telegram-widget.js?7"
+          data-telegram-login="YOUR_BOT_USERNAME" // заміни на свого!
           data-size="large"
           data-userpic="false"
           data-request-access="write"
@@ -46,7 +48,7 @@ export default function AdminPage() {
     <div>
       <h2 className="text-xl mb-4">Вітаємо, {user.first_name}! Це адмінка 🚀</h2>
       <button onClick={() => { localStorage.removeItem("tgUser"); setUser(null); }} className="underline mb-8">Вийти</button>
-      {/* Тут твоя адмінка */}
+      {/* Твій контент адмінки */}
     </div>
   );
 }
